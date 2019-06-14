@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>品牌列表案例</title>
+    <link rel="stylesheet" href="lib/bootstrap/bootstrap.css">
+    <script src="lib/vue/vue.js"></script>
+    <style>
+		.v-enter,
+		.v-leave-to {
+			opacity: 0;
+			transform: translateY(80px);
+		}
+		.v-enter-active,
+		.v-leave-active {
+			transition: all 0.6s ease;
+		}
+		.v-move {
+			transition: all 0.6s ease;
+		}
+		.v-leave-active {
+			position: absolute;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">添加品牌</h3>
+			</div>
+			<div class="panel-body form-inline">
+				<label>ID:<input type="text" class="form-control" v-model.trim="id"></label>
+				<label>Name:<input type="text" class="form-control" v-model.trim="name" ref="loseBlur" @keyup.enter="add"></label>
+				<input type="button" value="添加" class="btn btn-primary" @click="add">
+				<label>搜索名称关键词:<input type="text" class="form-control" v-model.trim="keywords" v-focus v-color="'green'"></label>
+			</div>
+		</div>
+
+		<table class="table table-bordered table-hover table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Ctime</th>
+					<th>Operation</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="item in search(keywords)" :key="item.id">
+					<td v-text="item.id"></td>
+					<td v-text="item.name"></td>
+					<td>{{ item.ctime | dateFormat() }}</td>
+					<td>
+						<a href="javascript:;" class="btn btn-danger" @click.pervent="del(item.id)">删除</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<transition-group appear tag="ul">
+			<li v-for="(item, i) in search(keywords)" :key="item.id">{{ item.id }} ----- {{ item.name }}</li>
+		</transition-group>
+	</div>
+    <script>
+	/**
+	 * 原生获取当前时间
+	 * @return {[type]} [description]
+	 */
+	getDate = function () {
+		let date = new Date();
+		let y = date.getFullYear()//年
+		let m = date.getMonth() + 1//月
+		let d = date.getDate()//日
+		let h = date.getHours()//时
+		let minute = date.getMinutes()//分
+		let s= date.getSeconds()//秒
+		m = m < 10 ? '0' + m : m
+		d = d < 10 ? '0' + d : d
+		h = h < 10 ? '0' + h : h
+		minute = minute < 10 ? '0' + minute : minute
+		s = s < 10 ? '0' + s : s
+		let result = y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' +s
+		return result
+	}
+
+
+	// 自定义全局按键修饰符
+	Vue.config.keyCodes.F2 = 113
+	// 定义全局指令
+	Vue.directive('focus', {
+		bind: function (el) {
+			// el.focus()
+		},
+		inserted: function (el) {
+			el.focus()
+		},
+		updated: function (el) {}
+	})
+	//自定义一个全局字体颜色的指令
+	Vue.directive('color', {
+		bind: function (el,binding) {
+			el.style.color = binding.value
+		}
+	})
+	// Vue 全局过滤器 处理时间的格式化
+	Vue.filter('dateFormat', (dateStr, pattern) => {
+		let date = new Date(dateStr);
+		let y = date.getFullYear()//年
+		let m = date.getMonth() + 1//月
+		let d = date.getDate()//日
+		let h = date.getHours()//时
+		let minute = date.getMinutes()//分
+		let s= date.getSeconds()//秒
+		m = m < 10 ? '0' + m : m
+		d = d < 10 ? '0' + d : d
+		h = h < 10 ? '0' + h : h
+		minute = minute < 10 ? '0' + minute : minute
+		s = s < 10 ? '0' + s : s
+		// let result = y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' +s
+		// let result = `${y}-${m}-${d} ${h}:${minute}:${s}`
+		if (pattern && pattern.toLowerCase() === 'yyyy-mm-dd') {
+			return `${y}-${m}-${d}`
+		}
+		return `${y}-${m}-${d} ${h}:${minute}:${s}`
+	})
+	var vm = new Vue({
+		el: '#app',
+		data: {
+			id: '',
+			name: '',
+			keywords: '',
+			lists: [
+				{id: 1, name: '宝马', ctime: '2019-06-06 20:41:56'},
+				{id: 2, name: '奔驰', ctime: '2019-06-05 20:41:56'}
+			]
+		},
+		methods: {
+			search (keywords) {
+				// let newLists = []
+				// this.lists.forEach((item) => {
+				// 	if (item.name.indexOf(keywords) !== -1) {
+				// 		newLists.push(item)
+				// 	}
+				// })
+				// return newLists
+				return this.lists.filter((item) => {
+					if (item.name.includes(keywords)) {
+						return item
+					}
+				})
+			},
+			add (){
+				if (this.id === '' || this.name === '') return console.log('ID和名字不能为空')
+				let brand = {
+					id: this.id,
+					name: this.name,
+					ctime: new Date()
+				}
+				this.lists.push(brand)
+				this.id = this.name = ''
+				
+				this.$refs.loseBlur.blur()
+			},
+			del (id){
+				// this.lists.some((item, index) => {
+				// 	if (item.id === id) {
+				// 		this.lists.splice(index, 1)
+				// 		return true
+				// 	}
+				// })
+				
+				let index = this.lists.findIndex((item) => {
+					if (item.id === id) {
+						return true;
+					}
+				})
+				this.lists.splice(index, 1)
+			},
+		},
+		filters: {//私有过滤器
+			dateFormat: (dateStr, pattern) => {
+				let setDateFormat = (val) => {
+					//return val = val < 10 ? 0 + val : val
+					return val.toString().padStart(2, '0')
+				}
+				let date = new Date(dateStr)
+				let y = date.getFullYear()//年
+				let m = setDateFormat(date.getMonth() + 1)//月
+				let d = setDateFormat(date.getDate())//日
+				let h = setDateFormat(date.getHours())//时
+				let minute = setDateFormat(date.getMinutes())//分
+				let s= setDateFormat(date.getSeconds())//秒`
+				if (pattern && pattern.toLowerCase() === 'yyyy-mm-dd') {
+					//转小写 2019-06-19
+					return `${y}-${m}-${d}`
+				}
+				//默认 2019-06-19 22:00:00
+				return `${y}-${m}-${d} ${h}:${minute}:${s}`
+			}
+		}
+	})
+    </script>
+</body>
+
+</html>

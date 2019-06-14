@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>v-model简易计算器</title>
+    <script src="./lib/vue/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-model.number.trim="n1" @input="calc">
+        <select v-model="opt" @change="calc">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+        </select>
+        <input type="text" v-model.number.trim="n2" @input="calc">
+        <input type="button" value="=" @click="calc">
+        <input type="text" v-model="result">
+    </div>
+    <script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            n1: 0,
+            n2: 0,
+            opt: '+',
+            result: 0
+        },
+        methods: {
+            calc() {
+                // switch (this.opt) {
+                //     case '+':
+                //         this.result = parseInt(this.n1) + parseInt(this.n2)
+                //         break;
+                //     case '-':
+                //         this.result = parseInt(this.n1) - parseInt(this.n2)
+                //         break;
+                //     case '*':
+                //         this.result = parseInt(this.n1) * parseInt(this.n2)
+                //         break;
+                //     case '/':
+                //         this.result = parseInt(this.n1) / parseInt(this.n2)
+                //         break;
+                // }
+                
+                var codeStr = 'this.n1' + this.opt + 'this.n2'
+                this.result = eval(codeStr)
+            }
+        }
+    })
+    </script>
+</body>
+
+</html>

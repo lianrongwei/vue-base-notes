@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>v-for</title>
+    <script src="./lib/vue/vue.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<ul>
+			<p>普通for循环v-for="item in list"</p>
+			<li v-for="item in list" v-bind:key="item">{{ item }}</li>
+		</ul>
+		<ul>
+			<p>普通带索引for循环v-for="(item, i) in list"</p>
+			<li v-for="(item, i) in list" v-bind:key="item">内容:{{ item }} === 索引:{{ i }}</li>
+		</ul>
+		<ul>
+			<p>数组对象for循环v-for="(item, i) in listObj"</p>
+			<li v-for="(item, i) in listObj" v-bind:key="item.id">ID:{{ item.id }} === 名字:{{ item.name }} === 索引:{{ i }}</li>
+		</ul>
+		<ul>
+			<p>遍历对象v-for="(val, key, index) in user"</p>
+			<li v-for="(val, key, index) in user" v-bind:key="index">值:{{ val }} === 键:{{ key }} === 索引:{{ index }}</li>
+		</ul>
+	</div>
+    <script>
+	var vm = new Vue({
+		el: '#app',
+		data: {
+			list: ['一', '二', '三', '斯', '五', '六'],
+			listObj: [
+				{id: 1, name: 'boke1'},
+				{id: 2, name: 'boke2'},
+				{id: 3, name: 'boke3'}
+			],
+			user: {
+				id: 1,
+				name: 'boke',
+				gender: '男'
+			}
+		},
+		methods: {}
+	})
+    </script>
+</body>
+
+</html>

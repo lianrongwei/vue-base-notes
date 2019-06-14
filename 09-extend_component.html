@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>extend_component</title>
+    <script src="./lib/vue/vue.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<my-com1></my-com1> 
+		<mycom1></mycom1>
+		<mycom2></mycom2>
+		<mycom3></mycom3>	
+	</div>
+
+
+	<template id="tmp1">
+		<div>
+			<h1>这是通过 template 元素，在外部定义的组件结构，这个方式，有代码的智能提示和高亮</h1>
+			<span>我是{{ name }}，今年{{ age }}岁了，我是{{ gender ? '男' : '女'}}孩。</span>
+		</div>
+	</template>
+	
+    <script>
+
+	//第一种写法
+	//使用 Vue.extend 来全局的 Vue 组件
+	var com1 = Vue.extend({
+		template: '<div><h1>使用 Vue.extend 来全局的 Vue 组件</h1><span>123</span></div>'
+	})
+
+	Vue.component('myCom1', com1)
+
+
+	//简写
+	Vue.component('mycom1', Vue.extend({
+		template: '<div><h1>使用 Vue.extend 来全局的 Vue 组件----简写方式</h1><span>123</span></div>'
+	}))
+
+	//第二种写法
+	Vue.component('mycom2', {
+		template: '<div><h1>使用  Vue.component("mycom2", {))来全局的 Vue 组件----简写方式</h1><span>123</span></div>'
+	})
+
+	//第三种写法
+	Vue.component('mycom3', {
+		template: '#tmp1',
+		data: function () {
+			return {name: 'boke', age: 18, gender: true}
+		}
+	})
+	
+
+	var vm = new Vue({
+		el: '#app',
+		data: {
+		},
+		methods: {}
+	})
+    </script>
+</body>
+
+</html>

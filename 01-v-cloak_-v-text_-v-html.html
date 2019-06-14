@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>v-cloak_-v-text_-v-html</title>
+    <style>
+	[v-cloak]{
+		display: none;
+	}
+	</style>
+</head>
+
+<body>
+    <div id="app">
+       <p v-cloak>+++{{ msg }}---</p><!-- 使用 v-cloak能够解决差值表达式闪烁的问题 （得加上css样式）-->
+       <h4 v-text="msg">===</h4><!-- 默认 v-text 是没有闪烁的问题 -->
+       <div v-html="msgHtml">***</div><!-- v-html 内容按普通 HTML 插入-->
+    </div>
+    <script src="./lib/vue/vue.js"></script>
+    <script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            msg: 'Gonefour_boke',
+            msgHtml: '<h1>我是h1</h1>'
+        }
+    })
+    </script>
+</body>
+
+</html>
